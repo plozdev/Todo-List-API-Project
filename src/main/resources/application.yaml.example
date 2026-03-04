@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: TodoListAPI
+  datasource:
+    url: jdbc:mysql://localhost:3306/todo_db
+    username: YOUR_DB_USERNAME_HERE
+    password: YOUR_DB_PASSWORD_HERE
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+app:
+  jwt:
+    secret: YOUR_JWT_SECRET_HERE
+    expiration-ms: 86400000
