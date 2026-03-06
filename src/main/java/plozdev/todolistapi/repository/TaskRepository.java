@@ -10,6 +10,5 @@ import java.util.Optional;
 
 public interface TaskRepository extends JpaRepository <Task, Integer>, JpaSpecificationExecutor<Task>  {
     Page<Task> findByUserId(Integer userId, Pageable pageable);
-    Page<Task> findByUserIdAndIsCompleted(Integer userId, boolean isCompleted, Pageable pageable);
     Optional<Task> findTaskById(Integer id);
 }
