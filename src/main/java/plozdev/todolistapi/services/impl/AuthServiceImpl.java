@@ -9,10 +9,10 @@ import plozdev.todolistapi.dto.auth.AuthResponse;
 import plozdev.todolistapi.dto.auth.LoginRequest;
 import plozdev.todolistapi.dto.auth.RegisterRequest;
 import plozdev.todolistapi.entities.User;
+import plozdev.todolistapi.mapper.UserMapper;
 import plozdev.todolistapi.repository.UserRepository;
 import plozdev.todolistapi.security.JwtService;
 import plozdev.todolistapi.services.AuthService;
-import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
@@ -21,15 +21,11 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final UserMapper userMapper;
 
     @Override
     public AuthResponse register(RegisterRequest request) {
-        User newUser = User.builder()
-                .name(request.getName())
-                .email(request.getEmail())
-                .passwordHash(passwordEncoder.encode(request.getPassword()))
-                .createdAt(Instant.now())
-                .build();
+        User newUser = userMapper.toEntity(request);
 
         userRepository.save(newUser);
 
