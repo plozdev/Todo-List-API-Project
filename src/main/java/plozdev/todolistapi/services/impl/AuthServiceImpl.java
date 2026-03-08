@@ -3,7 +3,6 @@ package plozdev.todolistapi.services.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import plozdev.todolistapi.dto.auth.AuthResponse;
 import plozdev.todolistapi.dto.auth.LoginRequest;
@@ -19,7 +18,6 @@ import plozdev.todolistapi.services.AuthService;
 public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
-    private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
 
