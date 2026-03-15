@@ -8,6 +8,8 @@ import plozdev.todolistapi.dto.auth.AuthResponse;
 import plozdev.todolistapi.dto.auth.LoginRequest;
 import plozdev.todolistapi.dto.auth.RegisterRequest;
 import plozdev.todolistapi.entities.User;
+import plozdev.todolistapi.exception.UserAlreadyExistsException;
+import plozdev.todolistapi.exception.UserNotFoundException;
 import plozdev.todolistapi.mapper.UserMapper;
 import plozdev.todolistapi.repository.UserRepository;
 import plozdev.todolistapi.security.JwtService;
@@ -24,6 +26,9 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponse register(RegisterRequest request) {
         User newUser = userMapper.toEntity(request);
+
+        if (userRepository.findByEmail(newUser.getEmail()).isPresent())
+            throw new UserAlreadyExistsException("Email is already registered");
 
         userRepository.save(newUser);
 
@@ -44,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
         );
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow();
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         String jwtToken = jwtService.generateToken(user);
 
