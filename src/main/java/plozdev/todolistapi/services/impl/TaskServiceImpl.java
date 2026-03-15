@@ -18,8 +18,6 @@ import plozdev.todolistapi.repository.TaskRepository;
 import plozdev.todolistapi.repository.UserRepository;
 import plozdev.todolistapi.services.TaskService;
 
-import java.time.LocalDateTime;
-
 @Service
 @RequiredArgsConstructor
 public class TaskServiceImpl implements TaskService {
