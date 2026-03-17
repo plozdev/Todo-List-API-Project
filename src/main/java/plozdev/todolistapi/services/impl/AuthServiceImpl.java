@@ -19,6 +19,7 @@ import plozdev.todolistapi.repository.RefreshTokenRepository;
 import plozdev.todolistapi.repository.UserRepository;
 import plozdev.todolistapi.security.JwtService;
 import plozdev.todolistapi.services.AuthService;
+import plozdev.todolistapi.exception.InvalidRefreshTokenException;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -74,7 +75,6 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private RefreshToken createRefreshToken(User user) {
-
         RefreshToken refToken = refreshTokenRepository.findByUser(user)
                 .orElse(new RefreshToken());
 
@@ -89,22 +89,37 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponse refreshToken(RefreshTokenRequest request) {
         return refreshTokenRepository.findByToken(request.getRefreshToken())
+                .filter(token -> !token.getRevoked())
                 .map(this::verifyExpiration)
                 .map(RefreshToken::getUser)
                 .map(user -> {
-                    String accessToken = jwtService.generateToken(user);
+                    String newAccessToken = jwtService.generateToken(user);
+                    RefreshToken newRefreshToken = createRefreshToken(user);
                     return AuthResponse.builder()
-                            .token(accessToken)
-                            .refreshToken(request.getRefreshToken())
+                            .token(newAccessToken)
+                            .refreshToken(newRefreshToken.getToken())
                             .build();
                 })
-                .orElseThrow(() -> new RuntimeException("Refresh token is not in database!"));
+                .orElseThrow(() -> new InvalidRefreshTokenException("Refresh token is invalid or expired!"));
+    }
+
+    public void logout(RefreshTokenRequest request) {
+        refreshTokenRepository.findByToken(request.getRefreshToken())
+                .ifPresentOrElse(
+                        token -> {
+                            token.setRevoked(true);
+                            refreshTokenRepository.save(token);
+                        },
+                        () -> {
+                            throw new InvalidRefreshTokenException("Refresh token not found!");
+                        }
+                );
     }
 
     public RefreshToken verifyExpiration(RefreshToken token) {
         if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
             refreshTokenRepository.delete(token);
-            throw new RuntimeException("Refresh token was expired. Please make a new signin request");
+            throw new InvalidRefreshTokenException("Refresh token was expired. Please make a new signin request");
         }
         return token;
     }
