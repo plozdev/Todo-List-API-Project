@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import plozdev.todolistapi.dto.auth.AuthResponse;
 import plozdev.todolistapi.dto.auth.LoginRequest;
+import plozdev.todolistapi.dto.auth.RefreshTokenRequest;
 import plozdev.todolistapi.dto.auth.RegisterRequest;
 import plozdev.todolistapi.services.AuthService;
 
@@ -32,5 +33,15 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(request));
     }
 
+    @PostMapping("/refresh-token")
+    public ResponseEntity<AuthResponse> refreshToken(@RequestBody RefreshTokenRequest request) {
+        return ResponseEntity.ok(authService.refreshToken(request));
+    }
 
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@RequestBody RefreshTokenRequest request) {
+        log.info("Logging out user");
+        authService.logout(request);
+        return ResponseEntity.ok().build();
+    }
 }
