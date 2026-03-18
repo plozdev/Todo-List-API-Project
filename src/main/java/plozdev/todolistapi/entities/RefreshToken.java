@@ -29,7 +29,7 @@ public class RefreshToken {
     private String token;
 
     @NotNull
-    @Column(name = "expiry_date", nullable = false)
+    @Column(name = "expiry_date", nullable = false, precision = 0)
     private LocalDateTime expiryDate;
 
     @ColumnDefault("0")

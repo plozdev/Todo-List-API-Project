@@ -44,7 +44,7 @@ public class User implements UserDetails {
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at", updatable = false, precision = 0)
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "user")
