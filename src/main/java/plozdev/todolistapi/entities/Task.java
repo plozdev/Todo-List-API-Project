@@ -44,16 +44,16 @@ public class Task {
     @Column(name = "priority", nullable = false)
     private TaskPriority priority;
 
-    @Column(name = "due_date")
+    @Column(name = "due_date", precision = 0)
     private LocalDateTime dueDate;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at", updatable = false, precision = 0)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", precision = 0)
     private LocalDateTime updatedAt;
 
 }
