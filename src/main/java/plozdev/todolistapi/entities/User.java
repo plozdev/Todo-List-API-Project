@@ -48,6 +48,7 @@ public class User implements UserDetails {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "user")
+    @Builder.Default
     private Set<Task> tasks = new LinkedHashSet<>();
 
 
