@@ -3,11 +3,12 @@ package plozdev.todolistapi.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.ReportingPolicy;
 import plozdev.todolistapi.dto.task.TaskRequest;
 import plozdev.todolistapi.dto.task.TaskResponse;
 import plozdev.todolistapi.entities.Task;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TaskMapper {
 
     Task toEntity(TaskRequest request);
