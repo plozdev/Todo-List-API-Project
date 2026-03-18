@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import plozdev.todolistapi.dto.auth.AuthResponse;
@@ -33,6 +34,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${app.jwt.refresh-expiration}")
     private long refreshTokenDuration;
@@ -43,6 +45,8 @@ public class AuthServiceImpl implements AuthService {
 
         if (userRepository.findByEmail(newUser.getEmail()).isPresent())
             throw new UserAlreadyExistsException("Email is already registered");
+
+        newUser.setPasswordHash(passwordEncoder.encode(newUser.getPasswordHash()));
 
         userRepository.save(newUser);
 
