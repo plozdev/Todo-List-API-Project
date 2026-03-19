@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow - Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- ==================== SIDEBAR ==================== -->
+        <aside class="sidebar">
+            <!-- Logo & Brand -->
+            <div class="sidebar-header">
+                <div class="logo-icon">✓</div>
+                <div>
+                    <h1 class="logo-title">TaskFlow</h1>
+                    <p class="logo-subtitle">Productivity Suite</p>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active" data-view="dashboard">
+                    <span class="menu-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="menu-item" data-view="tasks">
+                    <span class="menu-icon">📋</span>
+                    <span>My Tasks</span>
+                </a>
+                <a href="#" class="menu-item" data-view="categories">
+                    <span class="menu-icon">🏷️</span>
+                    <span>Categories</span>
+                </a>
+                <a href="#" class="menu-item" data-view="calendar">
+                    <span class="menu-icon">📅</span>
+                    <span>Calendar</span>
+                </a>
+                <a href="#" class="menu-item" data-view="settings">
+                    <span class="menu-icon">⚙️</span>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <!-- User Profile & Logout -->
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <img id="userAvatar" src="https://via.placeholder.com/40" alt="User Avatar" class="avatar">
+                    <div class="user-info">
+                        <div class="user-name" id="userName">User Name</div>
+                        <div class="user-email" id="userEmail">user@email.com</div>
+                    </div>
+                </div>
+                <button id="logoutBtn" class="btn-logout">
+                    <span>🚪</span>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- ==================== MAIN CONTENT ==================== -->
+        <main class="main-content">
+            <!-- Header Section -->
+            <div class="content-header">
+                <div class="header-title">
+                    <h2 id="pageTitle">Daily Dashboard</h2>
+                    <p id="pageDescription">You have 5 tasks remaining for today.</p>
+                </div>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" placeholder="Search tasks..." class="search-input">
+                    </div>
+                    <button id="addTaskBtn" class="btn-primary">
+                        <span>+</span> Add New Task
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Overview -->
+            <div class="stats-grid" id="statsContainer">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Completed</span>
+                        <span class="stat-icon completed">✅</span>
+                    </div>
+                    <div class="stat-value" data-stat="completed">12</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">In Progress</span>
+                        <span class="stat-icon in-progress">⏳</span>
+                    </div>
+                    <div class="stat-value" data-stat="in-progress">4</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Pending</span>
+                        <span class="stat-icon pending">📌</span>
+                    </div>
+                    <div class="stat-value" data-stat="pending">8</div>
+                </div>
+            </div>
+
+            <!-- Task Table -->
+            <div class="task-table-wrapper">
+                <table class="task-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="selectAllCheckbox" class="task-checkbox">
+                            </th>
+                            <th>Task Title</th>
+                            <th>Status</th>
+                            <th>Due Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="taskTableBody">
+                        <!-- 
+                           GỢI Ý (DÀNH CHO BẠN TỰ CODE JS HOẶC THYMELEAF):
+                           Dưới đây là cấu trúc HTML chuẩn của 1 dòng (Row). Bạn có thể dùng JS (innerHTML) 
+                           hoặc Thymeleaf (th:each="task : ${tasks}") để lặp sinh ra các dòng này!
+                        -->
+                        <tr class="task-row" th:each="task : ${tasks}"> <!-- Xóa th:each nếu dùng JS -->
+                            <td>
+                                <input type="checkbox" class="task-checkbox" th:checked="${task.completed}">
+                            </td>
+                            <td>
+                                <!-- Task Title -->
+                                <span class="task-title" th:text="${task.title}">Sample Task Title</span>
+                            </td>
+                            <td>
+                                <!-- Status Badge -->
+                                <span class="status-badge" th:classappend="${task.status == 'COMPLETED' ? 'completed' : 'pending'}" th:text="${task.status}">Pending</span>
+                            </td>
+                            <td>
+                                <!-- Due Date -->
+                                <span class="task-date" th:text="${#temporals.format(task.dueDate, 'dd-MM-yyyy')}">20-10-2026</span>
+                            </td>
+                            <td>
+                                <!-- Actions -->
+                                <button class="btn-action edit" th:attr="onclick=|editTask(${task.id})|">✏️</button>
+                                <button class="btn-action delete" th:attr="onclick=|deleteTask(${task.id})|">🗑️</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <div class="table-footer">
+                    <p class="pagination-info">
+                        Showing <span id="currentPage">1</span> of <span id="totalPages">5</span> pages
+                    </p>
+                    <div class="pagination-controls">
+                        <button id="prevBtn" class="btn-pagination">◀</button>
+                        <button id="nextBtn" class="btn-pagination">▶</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Add/Edit Task (Optional) -->
+    <div id="taskModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Add New Task</h3>
+            <!-- Form fields here -->
+            <button class="btn-primary">Save</button>
+            <button class="btn-secondary">Cancel</button>
+        </div>
+    </div>
+
+    <script src="/js/index.js" defer></script>
+</body>
+</html>

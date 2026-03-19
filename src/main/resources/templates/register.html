@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-
 <head>
     <meta charset="UTF-8">
     <title>Sign Up - TaskFlow</title>
     <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <!-- Redirect to login after 3 seconds if registration is successful -->
+    <meta http-equiv="refresh" content="3;url=/login" th:if="${msg}">
 </head>
-
 <body>
     <div class="auth-container">
         <div class="auth-box">
@@ -19,21 +19,27 @@
             <h2 class="auth-title">Register</h2>
             <p class="auth-subtitle">Create your account and stay organized.</p>
 
-            <!-- Notification Box -->
-            <div id="notification" class="notification hidden">
-                <span id="notificationMessage"></span>
-                <button id="notificationClose" class="notification-close-btn" type="button">×</button>
+            <!-- Notification Box (Error) -->
+            <div th:if="${error}" class="notification notification-error">
+                <span th:text="${error}"></span>
+                <button class="notification-close-btn" type="button" onclick="this.parentElement.style.display='none'">×</button>
+            </div>
+            
+            <!-- Notification Box (Success) -->
+            <div th:if="${msg}" class="notification notification-success">
+                <span th:text="${msg}"></span>
+                <button class="notification-close-btn" type="button" onclick="this.parentElement.style.display='none'">×</button>
             </div>
 
-            <form id="registerForm" class="auth-form">
+            <form th:action="@{/register}" method="post" class="auth-form">
                 <div class="form-group">
-                    <label for="fullName">Full Name</label>
+                    <label for="name">Full Name</label>
                     <div class="input-wrapper">
                         <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                             <circle cx="12" cy="7" r="4"/>
                         </svg>
-                        <input type="text" id="fullName" name="fullName" placeholder="John Doe" required />
+                        <input type="text" id="name" name="name" th:value="${registerData?.name}" placeholder="John Doe" required />
                     </div>
                 </div>
 
@@ -43,7 +49,7 @@
                         <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                         </svg>
-                        <input type="email" id="email" name="email" placeholder="example@gmail.com" required />
+                        <input type="email" id="email" name="email" th:value="${registerData?.email}" placeholder="example@gmail.com" required />
                     </div>
                 </div>
 
@@ -53,17 +59,7 @@
                         <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path d="M12 1a11 11 0 110 22 11 11 0 010-22zm-2 11a2 2 0 104 0 2 2 0 00-4 0z"/>
                         </svg>
-                        <input type="password" id="password" name="password" placeholder="Enter your password" required />
-                        <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('password')">
-                            <svg class="eye-icon show" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                <circle cx="12" cy="12" r="3"/>
-                            </svg>
-                            <svg class="eye-icon hide hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                                <line x1="1" y1="1" x2="23" y2="23"/>
-                            </svg>
-                        </button>
+                        <input type="password" id="password" name="password" placeholder="Enter password" required />
                     </div>
                 </div>
 
@@ -73,22 +69,11 @@
                         <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path d="M12 1a11 11 0 110 22 11 11 0 010-22zm-2 11a2 2 0 104 0 2 2 0 00-4 0z"/>
                         </svg>
-                        <input type="password" id="confirmPassword" name="confirmPassword"
-                            placeholder="Confirm your password" required />
-                        <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('confirmPassword')">
-                            <svg class="eye-icon show" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                <circle cx="12" cy="12" r="3"/>
-                            </svg>
-                            <svg class="eye-icon hide hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                                <line x1="1" y1="1" x2="23" y2="23"/>
-                            </svg>
-                        </button>
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm password" required />
                     </div>
                 </div>
 
-                <button type="submit" class="btn-submit">Sign Up</button>
+                <button type="submit" id="submitBtn" class="btn-submit" disabled style="opacity: 0.5; cursor: not-allowed;">Sign Up</button>
             </form>
 
             <p class="auth-link">
@@ -97,7 +82,47 @@
         </div>
     </div>
 
-    <script src="/js/register.js" defer></script>
-</body>
+    <script>
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const confirmInput = document.getElementById('confirmPassword');
+        const submitBtn = document.getElementById('submitBtn');
 
+        function validateForm() {
+            const isNameFilled = nameInput.value.trim() !== "";
+            const isEmailFilled = emailInput.value.trim() !== "";
+            const password = passwordInput.value;
+            const confirm = confirmInput.value;
+            
+            const isMatch = password === confirm && confirm !== "";
+            
+            // Visual feedback for password match
+            if (confirm !== "") {
+                if (isMatch) {
+                    confirmInput.style.borderColor = "#22c55e";
+                } else {
+                    confirmInput.style.borderColor = "#ef4444";
+                }
+            } else {
+                confirmInput.style.borderColor = "";
+            }
+
+            // Enable button only if all valid
+            if (isNameFilled && isEmailFilled && isMatch && password.length >= 6) {
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = "1";
+                submitBtn.style.cursor = "pointer";
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = "0.5";
+                submitBtn.style.cursor = "not-allowed";
+            }
+        }
+
+        [nameInput, emailInput, passwordInput, confirmInput].forEach(input => {
+            input.addEventListener('input', validateForm);
+        });
+    </script>
+</body>
 </html>

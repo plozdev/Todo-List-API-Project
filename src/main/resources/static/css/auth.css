@@ -156,7 +156,6 @@ nav a:hover {
     max-width: 480px;
     z-index: 10;
     position: relative;
-    animation: slideUp 0.5s ease-out;
 }
 
 body.dark-mode .auth-box {
@@ -165,16 +164,7 @@ body.dark-mode .auth-box {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 32px 64px rgba(19, 109, 236, 0.05);
 }
 
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+
 
 .auth-title {
     font-size: 2rem;
@@ -403,7 +393,7 @@ body.dark-mode .form-group input.no-match {
     font-weight: 500;
     font-size: 0.9rem;
     border-left: 4px solid;
-    animation: slideDown 0.3s ease;
+    border-left: 4px solid;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
@@ -412,7 +402,6 @@ body.dark-mode .form-group input.no-match {
 
 .notification.hidden {
     display: none !important;
-    animation: slideUp 0.3s ease;
 }
 
 .notification-close-btn {
@@ -485,27 +474,7 @@ body.dark-mode .notification-warning {
     flex-shrink: 0;
 }
 
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 
-@keyframes slideUp {
-    from {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    to {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-}
 
 .btn-submit {
     padding: 12px 16px;
@@ -569,7 +538,6 @@ body.dark-mode .auth-link {
     border-radius: 8px;
     margin-bottom: 15px;
     font-size: 0.9rem;
-    animation: slideDown 0.3s ease;
     border-left: 4px solid;
 }
 
