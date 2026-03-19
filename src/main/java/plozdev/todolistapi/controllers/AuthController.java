@@ -1,5 +1,6 @@
 package plozdev.todolistapi.controllers;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,9 +29,15 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request, HttpSession session) {
         log.info("Logging in user: {}", request.getEmail());
-        return ResponseEntity.ok(authService.login(request));
+
+        AuthResponse response = authService.login(request);
+
+        if (response.getToken()!=null)
+            session.setAttribute("token", response.getToken());
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/refresh-token")

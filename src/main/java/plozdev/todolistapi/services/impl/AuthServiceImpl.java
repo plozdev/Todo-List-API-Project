@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,8 +14,8 @@ import plozdev.todolistapi.dto.auth.RefreshTokenRequest;
 import plozdev.todolistapi.dto.auth.RegisterRequest;
 import plozdev.todolistapi.entities.RefreshToken;
 import plozdev.todolistapi.entities.User;
+import plozdev.todolistapi.exception.InvalidAuthenticationException;
 import plozdev.todolistapi.exception.UserAlreadyExistsException;
-import plozdev.todolistapi.exception.UserNotFoundException;
 import plozdev.todolistapi.mapper.UserMapper;
 import plozdev.todolistapi.repository.RefreshTokenRepository;
 import plozdev.todolistapi.repository.UserRepository;
@@ -60,15 +61,22 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse login(LoginRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new InvalidAuthenticationException("There is no user registered" + 
+                " with that email address."));
+
+                try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    )
+            );
+        } catch (AuthenticationException e) {
+            throw new InvalidAuthenticationException("Password is incorrect.");
+        }   
+
 
         String jwtToken = jwtService.generateToken(user);
 

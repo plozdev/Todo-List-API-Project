@@ -20,13 +20,13 @@ public class GlobalExceptionHandler {
                 .body(ErrorResponse.builder()
                         .timestamp(LocalDateTime.now())
                         .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                        .message("An unexpected error occurred. Please try again later.")
+                        .message(ex.getMessage())
                         .path(request.getDescription(false).replace("uri=", ""))
                         .build());
     }
 
-    @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidCredentials(InvalidCredentialsException ex, WebRequest request) {
+    @ExceptionHandler(InvalidAuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidAuthentication(InvalidAuthenticationException ex, WebRequest request) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(ErrorResponse.builder()
                         .timestamp(LocalDateTime.now())
@@ -47,16 +47,7 @@ public class GlobalExceptionHandler {
                         .build());
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException ex, WebRequest request) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ErrorResponse.builder()
-                        .timestamp(LocalDateTime.now())
-                        .status(HttpStatus.NOT_FOUND.value())
-                        .message(ex.getMessage())
-                        .path(request.getDescription(false).replace("uri=",""))
-                        .build());
-    }
+
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
