@@ -4,6 +4,26 @@ A robust, full-stack personal task management application built with **Spring Bo
 
 ---
 
+## 📸 Screenshots
+
+*(Replace the placeholder links below with your actual image paths once you take screenshots)*
+
+<div align="center">
+  <img src="https://via.placeholder.com/800x450.png?text=Dashboard+View" alt="Dashboard View" width="80%">
+  <p><i>The dynamic SSR Dashboard with Task Counters and Sorting</i></p>
+</div>
+
+<div align="center" style="display: flex; justify-content: center; gap: 20px;">
+  <div style="flex: 1;">
+    <img src="https://via.placeholder.com/400x300.png?text=Login+Screen" alt="Login Screen" width="100%">
+  </div>
+  <div style="flex: 1;">
+    <img src="https://via.placeholder.com/400x300.png?text=Swagger+UI+Docs" alt="Swagger UI" width="100%">
+  </div>
+</div>
+
+---
+
 ## ✨ Features
 
 - **Full-Stack UI & API**: Use the beautiful Thymeleaf SSR dashboard directly in your browser, or consume the RESTful API via client applications.
@@ -155,5 +175,3 @@ The application uses `ddl-auto: update`, so tables are created automatically on 
 ## 📜 License & Credits
 
 This project is created for educational and portfolio purposes, showcasing profound understanding of the Spring Ecosystem and modern Web UI integration.
-
-Original API structure based on references from [roadmap.sh/projects/todo-list-api](https://roadmap.sh/projects/todo-list-api).
