@@ -6,19 +6,20 @@ A robust, full-stack personal task management application built with **Spring Bo
 
 ## 📸 Screenshots
 
-*(Replace the placeholder links below with your actual image paths once you take screenshots)*
-
 <div align="center">
-  <img src="https://via.placeholder.com/800x450.png?text=Dashboard+View" alt="Dashboard View" width="80%">
-  <p><i>The dynamic SSR Dashboard with Task Counters and Sorting</i></p>
+  <img width="1919" height="926" alt="Screenshot 2026-03-21 012739" src="https://github.com/user-attachments/assets/0ba0e85b-d3fd-4bbc-8b0c-148ece7b7dfb" />
+
+  <p><i>Dashboard</i></p>
 </div>
 
 <div align="center" style="display: flex; justify-content: center; gap: 20px;">
   <div style="flex: 1;">
-    <img src="https://via.placeholder.com/400x300.png?text=Login+Screen" alt="Login Screen" width="100%">
+    <img width="1919" height="925" alt="Screenshot 2026-03-21 012914" src="https://github.com/user-attachments/assets/d90aad73-4083-494b-98aa-14b175c1e9f3" />
+    <p><i>Login Page</i></p>
   </div>
   <div style="flex: 1;">
-    <img src="https://via.placeholder.com/400x300.png?text=Swagger+UI+Docs" alt="Swagger UI" width="100%">
+     <img width="1919" height="927" alt="Screenshot 2026-03-21 012921" src="https://github.com/user-attachments/assets/5febb2df-7536-425a-aaaa-ed578e10f2c7" />
+       <p><i>Register Page</i></p>
   </div>
 </div>
 
