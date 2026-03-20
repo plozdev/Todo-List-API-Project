@@ -27,18 +27,24 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
-        final String authHeader = request.getHeader("Authorization");
-        final String jwt;
-        final String userEmail;
+        // 1. Try to get token from Header (for JS/API)
+        String authHeader = request.getHeader("Authorization");
+        String jwt = null;
+        String userEmail = null;
 
-        // check if request contains header
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            jwt = authHeader.substring(7);
+        }
+        // 2. FALLBACK: Get token from Session (for pure Thymeleaf/SSR)
+        else if (request.getSession().getAttribute("token") != null) {
+            jwt = (String) request.getSession().getAttribute("token");
+        }
+
+        if (jwt == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // split token
-        jwt = authHeader.substring(7);
         userEmail = jwtService.extractUsername(jwt);
 
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {

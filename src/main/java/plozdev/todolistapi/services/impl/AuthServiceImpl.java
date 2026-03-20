@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,8 +15,8 @@ import plozdev.todolistapi.dto.auth.RefreshTokenRequest;
 import plozdev.todolistapi.dto.auth.RegisterRequest;
 import plozdev.todolistapi.entities.RefreshToken;
 import plozdev.todolistapi.entities.User;
+import plozdev.todolistapi.exception.InvalidAuthenticationException;
 import plozdev.todolistapi.exception.UserAlreadyExistsException;
-import plozdev.todolistapi.exception.UserNotFoundException;
 import plozdev.todolistapi.mapper.UserMapper;
 import plozdev.todolistapi.repository.RefreshTokenRepository;
 import plozdev.todolistapi.repository.UserRepository;
@@ -41,34 +43,35 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse register(RegisterRequest request) {
-        User newUser = userMapper.toEntity(request);
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new UserAlreadyExistsException("Email already exists!");
+        }
 
-        if (userRepository.findByEmail(newUser.getEmail()).isPresent())
-            throw new UserAlreadyExistsException("Email is already registered");
+        User user = userMapper.toEntity(request);
+        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        userRepository.save(user);
 
-        newUser.setPasswordHash(passwordEncoder.encode(newUser.getPasswordHash()));
-
-        userRepository.save(newUser);
-
-        String jwtToken = jwtService.generateToken(newUser);
-
-        return AuthResponse.builder()
-                .token(jwtToken)
-                .refreshToken(createRefreshToken(newUser).getToken())
-                .build();
+        return AuthResponse.builder().build();
     }
 
     @Override
     public AuthResponse login(LoginRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("There is no user registered" +
+                " with that email address."));
+
+                try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    )
+            );
+        } catch (AuthenticationException e) {
+            throw new InvalidAuthenticationException("Password is incorrect.");
+        }
+
 
         String jwtToken = jwtService.generateToken(user);
 

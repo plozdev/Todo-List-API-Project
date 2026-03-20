@@ -17,6 +17,7 @@ public class TodoListApiApplication {
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReady() {
         log.info("=================================================");
+        log.info("Web: http://localhost:8080/");
         log.info("Swagger UI: http://localhost:8080/swagger-ui/index.html");
         log.info("JSON: http://localhost:8080/v3/api-docs");
         log.info("=================================================");

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow - Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- ==================== SIDEBAR ==================== -->
+        <aside class="sidebar">
+            <!-- Logo & Brand -->
+            <div class="sidebar-header">
+                <div class="logo-icon">✓</div>
+                <div>
+                    <h1 class="logo-title">TaskFlow</h1>
+                    <p class="logo-subtitle">Productivity Suite</p>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active" data-view="dashboard">
+                    <span class="menu-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="menu-item" data-view="tasks">
+                    <span class="menu-icon">📋</span>
+                    <span>My Tasks</span>
+                </a>
+                <a href="#" class="menu-item" data-view="categories">
+                    <span class="menu-icon">🏷️</span>
+                    <span>Categories</span>
+                </a>
+                <a href="#" class="menu-item" data-view="calendar">
+                    <span class="menu-icon">📅</span>
+                    <span>Calendar</span>
+                </a>
+                <a href="#" class="menu-item" data-view="settings">
+                    <span class="menu-icon">⚙️</span>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <!-- User Profile & Logout -->
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-info">
+                        <div class="user-name" id="userName" th:text="${userName}">User Name</div>
+                        <div class="user-email" id="userEmail" th:text="${userEmail}">user@email.com</div>
+                    </div>
+                </div>
+                <a th:href="@{/logout}" id="logoutBtn" class="btn-logout" style="text-decoration: none;">
+                    <span>🚪</span>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- ==================== MAIN CONTENT ==================== -->
+        <main class="main-content">
+            <!-- Header Section -->
+            <div class="content-header">
+                <div class="header-title">
+                    <h2 id="pageTitle">Daily Dashboard</h2>
+                    <p id="pageDescription" th:text="'You have ' + ${pendingCount} + ' tasks remaining.'">You have 5 tasks remaining for today.</p>
+                    <p th:if="${errorMsg}" th:text="${errorMsg}" style="color: #dc2626; background: #fee2e2; padding: 8px 12px; border-radius: 6px; font-size: 14px; margin-top: 10px; border: 1px solid #f87171;"></p>
+                </div>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <form th:action="@{/}" method="get" style="display: flex; width: 100%; align-items: center;">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" name="keyword" placeholder="Search tasks..." class="search-input" th:value="${keyword}" style="border:none; outline:none; width:100%; background:transparent;">
+                        </form>
+                    </div>
+                    <button id="addTaskBtn" class="btn-primary" onclick="document.getElementById('taskModal').classList.remove('hidden')">
+                        <span>+</span> Add New Task
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Overview -->
+            <div class="stats-grid" id="statsContainer">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Completed</span>
+                        <span class="stat-icon completed">✅</span>
+                    </div>
+                    <div class="stat-value" data-stat="completed" th:text="${completedCount}">12</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Total Tasks</span>
+                        <span class="stat-icon in-progress">📝</span>
+                    </div>
+                    <div class="stat-value" data-stat="in-progress" th:text="${totalCount}">4</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-label">Incomplete</span>
+                        <span class="stat-icon pending">📌</span>
+                    </div>
+                    <div class="stat-value" data-stat="pending" th:text="${pendingCount}">8</div>
+                </div>
+            </div>
+
+            <!-- Task Table -->
+            <div class="task-table-wrapper">
+                <table class="task-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <a th:href="@{/(page=${currentPage - 1}, keyword=${keyword ?: ''}, sortField='title', sortDir=${sortField == 'title' ? reverseSortDir : 'asc'})}" style="text-decoration:none; color:inherit;">
+                                    Task Title <span th:if="${sortField == 'title'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
+                                </a>
+                            </th>
+                            <th>Status</th>
+                            <th>
+                                <a th:href="@{/(page=${currentPage - 1}, keyword=${keyword ?: ''}, sortField='dueDate', sortDir=${sortField == 'dueDate' ? reverseSortDir : 'asc'})}" style="text-decoration:none; color:inherit;">
+                                    Due Date <span th:if="${sortField == 'dueDate'}" th:text="${sortDir == 'asc' ? '▲' : '▼'}"></span>
+                                </a>
+                            </th>
+                            <th>Complete</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="taskTableBody">
+                        <tr class="task-row" th:each="task : ${taskList}">
+                            <td>
+                                <span class="task-title" th:text="${task.title}" th:style="${task.isCompleted} ? 'text-decoration: line-through; opacity: 0.5;' : ''">Sample Task Title</span>
+                            </td>
+                            <td>
+                                <span class="status-badge" th:classappend="${task.isCompleted ? 'completed' : 'pending'}"
+                                    th:text="${task.isCompleted ? 'COMPLETED' : 'INCOMPLETE'}">Incomplete</span>
+                            </td>
+                            <td>
+                                <span class="task-date" th:text="${#temporals.format(task.dueDate, 'dd-MM-yyyy HH:mm')}">20-10-2026</span>
+                            </td>
+                            <td style="text-align: center;">
+                                <input type="checkbox" class="task-checkbox" th:checked="${task.isCompleted}" 
+                                       th:attr="onchange=|window.location.href='/tasks/toggle/${task.id}'|" style="transform: scale(1.5); cursor: pointer;">
+                            </td>
+                            <td>
+                                <!-- Actions -->
+<!--                                <a class="btn-action edit" th:href="@{/tasks/edit/{id}(id=${task.id})}" style="text-decoration:none; display:inline-flex; align-items:center;">✏️</a>-->
+                                <a class="btn-action delete" th:href="@{/tasks/delete/{id}(id=${task.id})}" onclick="return confirm('Are you sure you want to delete this task?');" style="text-decoration:none; display:inline-flex; align-items:center;">🗑️</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <div class="table-footer">
+                    <p class="pagination-info">
+                        Showing <span id="currentPage" th:text="${currentPage}">1</span> of <span id="totalPages" th:text="${totalPages}">5</span> pages
+                    </p>
+                    <div class="pagination-controls">
+                        <!-- For Previous Page Button -->
+                        <a th:if="${hasPrev}" th:href="@{/(page=${currentPage - 2}, keyword=${keyword ?: ''}, sortField=${sortField}, sortDir=${sortDir})}" class="btn-pagination" style="text-decoration: none;">◀</a>
+                        <button th:unless="${hasPrev}" class="btn-pagination" disabled style="opacity: 0.5; cursor: not-allowed;">◀</button>
+
+                        <!-- For Next Page Button -->
+                        <a th:if="${hasNext}" th:href="@{/(page=${currentPage}, keyword=${keyword ?: ''}, sortField=${sortField}, sortDir=${sortDir})}" class="btn-pagination" style="text-decoration: none;">▶</a>
+                        <button th:unless="${hasNext}" class="btn-pagination" disabled style="opacity: 0.5; cursor: not-allowed;">▶</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Add/Edit Task (Optional) -->
+    <div id="taskModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Add New Task</h3>
+            <form th:action="@{/tasks/add}" method="post">
+                <input type="hidden" name="isCompleted" value="false">
+                <div style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom:5px; font-weight: 500;">Title</label>
+                    <input type="text" name="title" placeholder="What to do?" required style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom:5px; font-weight: 500;">Due Date</label>
+                    <input type="datetime-local" name="dueDate" required style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px;">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display:block; margin-bottom:5px; font-weight: 500;">Priority</label>
+                    <select name="priority" required style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px;">
+                        <option value="LOW">Low</option>
+                        <option value="MEDIUM" selected>Medium</option>
+                        <option value="HIGH">High</option>
+                    </select>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button type="submit" class="btn-primary">Save Task</button>
+                    <button type="button" class="btn-secondary" onclick="document.getElementById('taskModal').classList.add('hidden')" style="padding: 10px 16px; border: 1px solid #cbd5e1; border-radius: 8px; background: white; font-weight: 600; cursor: pointer;">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        // Set min datetime to current local time to prevent choosing past dates visually
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        const dueDateInput = document.querySelector('input[name="dueDate"]');
+        if (dueDateInput) {
+            dueDateInput.min = now.toISOString().slice(0, 16);
+        }
+    </script>
+</body>
+</html>

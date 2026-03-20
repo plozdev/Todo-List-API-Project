@@ -10,5 +10,6 @@ public interface TaskService {
     TaskResponse updateTask(Integer id, TaskRequest request);
     void deleteTask(Integer id);
     TaskResponse getTask(Integer id);
+    Page<TaskResponse>searchTasks(String title, Pageable pageable);
     Page<TaskResponse>getAllTasks(Pageable pageable);
 }
