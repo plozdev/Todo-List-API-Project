@@ -1,0 +1,28 @@
+# Task List - TodoList API Upgrade
+
+- [x] Phase 1: Nền tảng chuyên nghiệp (Refactoring & Architecture) - 100%
+  - [x] Chuẩn hóa Error Handling
+    - [x] Hướng dẫn tạo class `ErrorResponse`
+    - [x] Cập nhật [GlobalExceptionHandler](file:///d:/SpringProjects/TodoListAPI/src/main/java/plozdev/todolistapi/exception/GlobalExceptionHandler.java#10-24)
+  - [x] Quản lý Cấu hình (Configuration Management)
+    - [x] Chuyển cấu hình sang [application.yaml](file:///d:/SpringProjects/TodoListAPI/src/main/resources/application.yaml)
+    - [x] Thiết lập Spring Profiles/Environment Variables
+  - [x] MapStruct Mapper (TaskMapper, UserMapper)
+  - [x] Security Config (JWT, CORS, CSRF)
+- [x] Phase 2: Nâng cấp Xác thực (Advanced Authentication) - 100%
+  - [x] JWT Token Generation & Validation (JwtService)
+  - [x] Refresh Token Entity & Repository
+  - [x] Refresh Token Logic trong AuthService (generateRefreshToken, verifyExpiration)
+  - [x] Token Rotation (tạo refresh token mới khi refresh)
+  - [x] Revoke Token (logout endpoint)
+  - [x] Custom Exception (InvalidRefreshTokenException)
+- [ ] Phase 3: Automated Tests
+  - [ ] Unit Tests cho Service Layer
+  - [ ] Integration Tests cho Controller Layer
+- [x] Phase 4: Infrastructure (Swagger) - 50%
+  - [x] Tích hợp Swagger/OpenAPI (OpenApiConfig)
+  - [ ] Viết Dockerfile & docker-compose.yml
+- [ ] Phase 5: Tính năng nâng cao
+  - [ ] Nhắc nhở công việc (Email & Scheduling)
+  - [ ] Tìm kiếm & Phân trang nâng cao
+  - [ ] Workspace/Project Collaboration
