@@ -74,6 +74,15 @@ public class TaskServiceImpl implements TaskService {
         return taskMapper.toResponse(currentTask);
     }
 
+    @Override
+    public Page<TaskResponse> searchTasks(String title, Pageable pageable) {
+        User currentUser = getCurrentUser();
+
+        Page<Task> taskPage = taskRepository.findByUserIdAndTitleContaining(currentUser.getId(), title, pageable);
+
+        return taskPage.map(taskMapper::toResponse);
+    }
+
 
     @Override
     public Page<TaskResponse> getAllTasks(Pageable pageable) {
